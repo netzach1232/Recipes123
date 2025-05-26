@@ -41,6 +41,24 @@
     </div>
 
 
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const justLoggedOut = sessionStorage.getItem("justLoggedOut");
+
+            if (justLoggedOut === "true") {
+                sessionStorage.removeItem("justLoggedOut"); // מנקה את הדגל
+                const email = document.getElementById("username");
+                const password = document.getElementById("password");
+
+                if (email) email.value = "";
+                if (password) password.value = "";
+            }
+
+            // לא נוגעים ב־autocomplete
+        });
+    </script>
+
+
     <script type="module" src="script.js"></script>
 </body>
 
