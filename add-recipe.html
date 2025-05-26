@@ -174,7 +174,10 @@
         <textarea name="description" rows="4" required></textarea>
 
         <label>העלה עד 3 תמונות:</label>
-        <input type="file" name="images" accept="image/*" multiple>
+        <input type="file" name="images" accept="image/*" multiple onchange="limitFiles(this)">
+        <p id="fileLimitMessage" style="color: red; display: none; margin-top: 8px;">
+            ❗ ניתן לבחור עד 3 תמונות בלבד.
+        </p>
 
         <p>📨 הטופס ישלח לבדיקה ופרסום</p>
 
@@ -301,7 +304,6 @@
                 reader.readAsDataURL(file);
             });
         }
-
         document.getElementById("userSubmitBtn").addEventListener("click", async () => {
             const title = document.querySelector('input[name="title"]').value.trim();
             const description = document.querySelector('textarea[name="description"]').value.trim();
@@ -312,8 +314,14 @@
                 return;
             }
 
+            // ❗ מניעה של יותר מ־3 תמונות
+            if (files.length > 3) {
+                alert("ניתן להעלות עד 3 תמונות בלבד.");
+                return;
+            }
+
             const imageUrls = [];
-            for (let i = 0; i < files.length && i < 3; i++) {
+            for (let i = 0; i < files.length; i++) {
                 try {
                     const url = await compressAndUploadImage(files[i], i);
                     imageUrls.push(url);
@@ -329,8 +337,7 @@
                 image1_url: imageUrls[0] || null,
                 image2_url: imageUrls[1] || null,
                 image3_url: imageUrls[2] || null,
-                is_approved: false// ← רק בכפתור של המפתח
-                // 🟡 כי זה של לקוח רגיל
+                is_approved: false
             });
 
             if (error) {
@@ -338,13 +345,21 @@
             } else {
                 window.location.href = "success-recipe.html";
             }
-
         });
 
         document.getElementById('userSubmitBtn').addEventListener('click', async () => {
             // ... פה נשאר false
         });
 
+        window.limitFiles = function (input) {
+            const msg = document.getElementById("fileLimitMessage");
+            if (input.files.length > 3) {
+                msg.style.display = "block";
+                input.value = ""; // מנקה את הבחירה
+            } else {
+                msg.style.display = "none";
+            }
+        };
 
     </script>
 
